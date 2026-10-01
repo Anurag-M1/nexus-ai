@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusAI — Intelligent Research & Knowledge Synthesis</title>
+  <meta name="description" content="NexusAI transforms scattered research into structured, interconnected knowledge using AI-powered synthesis and interactive knowledge graphs." />
+  <meta name="keywords" content="AI, research, knowledge graph, synthesis, NLP, Gemini" />
+  <meta name="author" content="NexusAI Team" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <link rel="icon" type="image/svg+xml" href="/nexus-favicon.svg" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+      <div class="ambient-orb ambient-orb-1"></div>
+      <div class="ambient-orb ambient-orb-2"></div>
+      <div class="ambient-orb ambient-orb-3"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon"><i data-lucide="brain-circuit"></i></div>
+          <span class="logo-text">NexusAI</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <button class="nav-link active" data-page="dashboard" id="nav-dashboard">
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-link" data-page="sources" id="nav-sources">
+          <i data-lucide="file-plus-2"></i><span>Sources</span>
+        </button>
+        <button class="nav-link" data-page="graph" id="nav-graph">
+          <i data-lucide="git-branch-plus"></i><span>Knowledge Graph</span>
+        </button>
+        <button class="nav-link" data-page="chat" id="nav-chat">
+          <i data-lucide="message-square-text"></i><span>Research Chat</span>
+        </button>
+        <button class="nav-link" data-page="reports" id="nav-reports">
+          <i data-lucide="file-text"></i><span>Reports</span>
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <div class="api-status" id="api-status">
+          <div class="status-dot"></div>
+          <span>API Not Set</span>
+        </div>
+        <button class="nav-link settings-btn" id="settings-btn">
+          <i data-lucide="settings"></i><span>Settings</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page active">
+        <header class="page-header">
+          <div>
+            <h1>Research Dashboard</h1>
+            <p class="page-subtitle">Your knowledge synthesis at a glance</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="btn-load-sample" title="Load curated AI research dataset">
+              <i data-lucide="sparkles"></i> Load Sample Data
+            </button>
+            <button class="btn btn-ghost" id="btn-export-data" title="Export all data as JSON">
+              <i data-lucide="download"></i> Export
+            </button>
+            <button class="btn btn-primary" id="btn-add-source-quick">
+              <i data-lucide="plus"></i> Add Source
+            </button>
+          </div>
+        </header>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon sources-icon"><i data-lucide="files"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-sources-value">0</span>
+              <span class="stat-label">Sources Indexed</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon entities-icon"><i data-lucide="hexagon"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-entities-value">0</span>
+              <span class="stat-label">Entities Discovered</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon connections-icon"><i data-lucide="link"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-connections-value">0</span>
+              <span class="stat-label">Connections Found</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon insights-icon"><i data-lucide="lightbulb"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-insights-value">0</span>
+              <span class="stat-label">Insights Generated</span>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="card chart-card">
+            <div class="card-header"><h3><i data-lucide="pie-chart"></i> Topic Distribution</h3></div>
+            <div class="card-body">
+              <canvas id="topic-chart"></canvas>
+              <div id="topic-chart-empty" class="empty-chart-msg">
+                <i data-lucide="pie-chart"></i><p>Add sources to see topic clusters</p>
+              </div>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <div class="card-header"><h3><i data-lucide="bar-chart-3"></i> Entity Types</h3></div>
+            <div class="card-body">
+              <canvas id="entity-chart"></canvas>
+              <div id="entity-chart-empty" class="empty-chart-msg">
+                <i data-lucide="bar-chart-3"></i><p>Entities will appear as you add sources</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3><i data-lucide="clock"></i> Recent Sources</h3>
+            <button class="btn btn-ghost" id="btn-view-all-sources">View All</button>
+          </div>
+          <div class="card-body" id="recent-sources-list">
+            <div class="empty-state" id="dashboard-empty">
+              <div class="empty-icon"><i data-lucide="book-open"></i></div>
+              <h3>No sources yet</h3>
+              <p>Add your first research source, or load our curated AI research dataset to explore the knowledge graph, chat, and reports immediately.</p>
+              <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+                <button class="btn btn-primary" id="btn-first-source"><i data-lucide="plus"></i> Add Source</button>
+                <button class="btn btn-secondary" id="btn-first-sample"><i data-lucide="sparkles"></i> Load Sample Data</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOURCES -->
+      <section id="page-sources" class="page">
+        <header class="page-header">
+          <div>
+            <h1>Source Manager</h1>
+            <p class="page-subtitle">Ingest and manage your research materials</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-add-source"><i data-lucide="plus"></i> Add Source</button>
+          </div>
+        </header>
+        <div class="card source-input-card" id="source-input-panel" style="display:none;">
+          <div class="card-header">
+            <h3><i data-lucide="file-plus-2"></i> Add New Source</h3>
+            <button class="btn btn-ghost btn-icon" id="btn-close-source-panel"><i data-lucide="x"></i></button>
+          </div>
+          <div class="card-body">
+            <div class="input-tabs">
+              <button class="input-tab active" data-input-type="text" id="tab-text"><i data-lucide="type"></i> Paste Text</button>
+              <button class="input-tab" data-input-type="url" id="tab-url"><i data-lucide="globe"></i> From URL</button>
+            </div>
+            <div class="input-area" id="input-text-area">
+              <input type="text" class="input-field" id="source-title" placeholder="Source title (e.g., 'Transformer Architecture Paper')" />
+              <textarea class="input-field textarea-large" id="source-text" placeholder="Paste your research text, article, or notes here..."></textarea>
+            </div>
+            <div class="input-area" id="input-url-area" style="display:none;">
+              <input type="text" class="input-field" id="source-url-title" placeholder="Source title" />
+              <input type="url" class="input-field" id="source-url" placeholder="https://example.com/research-paper" />
+              <button class="btn btn-ghost" id="btn-fetch-url" style="margin-bottom:12px;"><i data-lucide="download"></i> Fetch Content</button>
+              <textarea class="input-field textarea-large" id="source-url-content" placeholder="Fetched content will appear here, or paste manually..." style="display:none;"></textarea>
+            </div>
+            <div class="input-actions">
+              <button class="btn btn-primary btn-lg" id="btn-process-source"><i data-lucide="sparkles"></i> Analyze with AI</button>
+              <div class="processing-indicator" id="processing-indicator" style="display:none;">
+                <div class="spinner"></div><span>Extracting entities & building connections...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sources-grid" id="sources-grid">
+          <div class="empty-state" id="sources-empty">
+            <div class="empty-icon"><i data-lucide="database"></i></div>
+            <h3>No sources ingested</h3>
+            <p>Click "Add Source" to begin building your knowledge base.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- KNOWLEDGE GRAPH -->
+      <section id="page-graph" class="page">
+        <header class="page-header">
+          <div>
+            <h1>Knowledge Graph</h1>
+            <p class="page-subtitle">Interactive visualization of entity relationships</p>
+          </div>
+          <div class="header-actions">
+            <div class="graph-controls">
+              <button class="btn btn-ghost btn-icon" id="graph-zoom-in" title="Zoom In"><i data-lucide="zoom-in"></i></button>
+              <button class="btn btn-ghost btn-icon" id="graph-zoom-out" title="Zoom Out"><i data-lucide="zoom-out"></i></button>
+              <button class="btn btn-ghost btn-icon" id="graph-reset" title="Reset View"><i data-lucide="maximize-2"></i></button>
+            </div>
+          </div>
+        </header>
+        <div class="graph-container" id="graph-container">
+          <svg id="knowledge-graph" class="knowledge-graph-svg"></svg>
+          <div class="graph-empty" id="graph-empty">
+            <div class="empty-icon"><i data-lucide="git-branch-plus"></i></div>
+            <h3>No entities to visualize</h3>
+            <p>Add and analyze sources to see your knowledge graph come alive.</p>
+          </div>
+          <div class="node-details" id="node-details" style="display:none;">
+            <div class="node-details-header">
+              <h4 id="node-detail-name"></h4>
+              <button class="btn btn-ghost btn-icon btn-sm" id="close-node-details"><i data-lucide="x"></i></button>
+            </div>
+            <div class="node-details-body">
+              <span class="node-type-badge" id="node-detail-type"></span>
+              <p id="node-detail-desc"></p>
+              <div id="node-detail-connections"></div>
+            </div>
+          </div>
+        </div>
+        <div class="graph-legend" id="graph-legend">
+          <span class="legend-title">Entity Types:</span>
+          <div class="legend-items" id="legend-items"></div>
+        </div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="page-chat" class="page">
+        <header class="page-header">
+          <div>
+            <h1>Research Chat</h1>
+            <p class="page-subtitle">Ask questions about your knowledge base</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-ghost" id="btn-clear-chat"><i data-lucide="trash-2"></i> Clear Chat</button>
+          </div>
+        </header>
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-welcome" id="chat-welcome">
+              <div class="chat-welcome-icon"><i data-lucide="bot"></i></div>
+              <h3>Welcome to Research Chat</h3>
+              <p>Ask me anything about your indexed sources. I'll synthesize insights across all your research materials and provide cited answers.</p>
+              <div class="chat-suggestions" id="chat-suggestions">
+                <button class="suggestion-chip" data-query="Summarize all my research sources"><i data-lucide="file-text"></i> Summarize sources</button>
+                <button class="suggestion-chip" data-query="What are the key themes across my research?"><i data-lucide="sparkles"></i> Key themes</button>
+                <button class="suggestion-chip" data-query="Find contradictions or gaps in my research"><i data-lucide="search"></i> Find gaps</button>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <textarea class="chat-input" id="chat-input" placeholder="Ask about your research..." rows="1"></textarea>
+              <button class="btn btn-primary btn-icon chat-send" id="chat-send"><i data-lucide="send"></i></button>
+            </div>
+            <span class="chat-hint">AI responses are based on your indexed sources. Press Enter to send.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="page-reports" class="page">
+        <header class="page-header">
+          <div>
+            <h1>Research Reports</h1>
+            <p class="page-subtitle">AI-generated synthesis reports from your knowledge base</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btn-generate-report"><i data-lucide="file-plus"></i> Generate Report</button>
+          </div>
+        </header>
+        <div class="reports-container" id="reports-container">
+          <div class="empty-state" id="reports-empty">
+            <div class="empty-icon"><i data-lucide="file-text"></i></div>
+            <h3>No reports generated</h3>
+            <p>Click "Generate Report" to create an AI-powered synthesis of your research.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal" style="display:none;">
+      <div class="modal">
+        <div class="modal-header">
+          <h2><i data-lucide="settings"></i> Settings</h2>
+          <button class="btn btn-ghost btn-icon" id="close-settings"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-group">
+            <label class="setting-label">Gemini API Key</label>
+            <p class="setting-desc">Enter your Google Gemini API key to enable AI features. <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-primary-light);">Get a free key →</a></p>
+            <input type="password" class="input-field" id="api-key-input" placeholder="AIza..." />
+          </div>
+          <div class="setting-group">
+            <label class="setting-label">Model</label>
+            <p class="setting-desc">Select the Gemini model for AI features.</p>
+            <select class="input-field" id="model-select">
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast)</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (Best Quality)</option>
+            </select>
+          </div>
+          <div class="setting-group" style="padding-top:12px;border-top:1px solid var(--border-color);">
+            <label class="setting-label">Database Management</label>
+            <p class="setting-desc" id="server-info">Backend: Express + SQLite (WAL Mode) | Persistent Server Database</p>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-settings-seed"><i data-lucide="sparkles"></i> Load Sample Data</button>
+              <button class="btn btn-ghost btn-sm" id="btn-settings-reset" style="color:var(--accent-danger);"><i data-lucide="trash-2"></i> Reset Database</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" id="save-settings"><i data-lucide="check"></i> Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
