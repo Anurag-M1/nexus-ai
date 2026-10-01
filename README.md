@@ -83,7 +83,7 @@ nexus-ai/
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/nexus-ai.git
+git clone https://github.com/Anurag-M1/nexus-ai.git
 cd nexus-ai
 
 # Install dependencies
